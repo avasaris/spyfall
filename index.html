@@ -34,12 +34,12 @@
 
             const keyXOR = key.charCodeAt((x+y) % 417);
 
-            const messagePixel = messagePixelXOR ^ keyXOR;
+            const messagePixel = messagePixelXOR// ^ keyXOR;
 
             const messagePixelRGB = {
-              r: (messagePixel | parseInt("11000000", 2)) >>> 6,
-              g: (messagePixel | parseInt("00111000", 2)) >>> 3,
-              b: messagePixel | parseInt("00000111", 2)
+              r: (messagePixel & parseInt("11000000", 2)) >> 6,
+              g: (messagePixel & parseInt("00111000", 2)) >> 3,
+              b: messagePixel & parseInt("00000111", 2)
             };
 
             putPixelToSolution(messagePixelRGB, x, y);
