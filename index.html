@@ -1,7 +1,8 @@
 <html>
-  <body>
+
+<body>
     <p>
-      <button>Декодировать</button>
+        <button>Декодировать</button>
     </p>
     <canvas id="source" width="600" height="400"></canvas>
     <canvas id="message" width="600" height="400"></canvas>
@@ -10,44 +11,37 @@
     <script src="./data.js"></script>
     <script src="./functions.js"></script>
     <script>
-      const width = 600;
-      const height = 400;
-      const key = getEncryptionKey();
-      console.log("Ключ шифрования", key);
+        const width = 600;
+        const height = 400;
+        const key = getEncryptionKey();
+        ////console.log("Ключ шифрования", key);
 
-      document.querySelector("button").addEventListener("click", () => {
-        for (let x = 0; x < width; x++) {
-          for (let y = 0; y < height; y++) {
-            // Получение пикселя оригинального сообщения
-            const originalPixel = getOriginalPixelColor(x, y);
-            // Получение пикселя зашифрованного сообщения
-            const secretPixel = getMessagePixelColor(x, y);
-            // Декодирование
+        document.querySelector("button").addEventListener("click", () => {
+            for (let y = 0; y < height; y++) {
+                for (let x = 0; x < width; x++) {
+                    // Получение пикселя оригинального сообщения
+                    const originalPixel = getOriginalPixelColor(x, y);
+                    // Получение пикселя зашифрованного сообщения
+                    const secretPixel = getMessagePixelColor(x, y);
+                    // Декодирование
 
-            const messagePixelRGBxor = {
-              r: secretPixel.r - originalPixel.r,
-              g: secretPixel.g - originalPixel.g,
-              b: secretPixel.b - originalPixel.b
-            };
+                    const messagePixelRGBxor = {
+                        r: secretPixel.r - originalPixel.r,
+                        g: secretPixel.g - originalPixel.g,
+                        b: secretPixel.b - originalPixel.b
+                    };
 
-            const messagePixelXOR = (messagePixelRGBxor.r << 6) + (messagePixelRGBxor.g << 3) + messagePixelRGBxor.b;
+                    const messagePixelXOR = (messagePixelRGBxor.r << 6) + (messagePixelRGBxor.g << 3) + messagePixelRGBxor.b;
 
-            const keyXOR = key.charCodeAt((x+y) % 417);
+                    const keyXOR = key.charCodeAt((x + y * width) % 417);
 
-            const messagePixel = messagePixelXOR// ^ keyXOR;
+                    const solutionPixel = messagePixelXOR ^ keyXOR;
 
-            const messagePixelRGB = {
-              r: (messagePixel & parseInt("11000000", 2)) >> 6,
-              g: (messagePixel & parseInt("00111000", 2)) >> 3,
-              b: messagePixel & parseInt("00000111", 2)
-            };
-
-            putPixelToSolution(messagePixelRGB, x, y);
-
-            
-          }
-        }
-      });
+                    putPixelToSolution({r: solutionPixel, g: solutionPixel, b: solutionPixel}, x, y);
+                }
+            }
+        });
     </script>
-  </body>
+</body>
+
 </html>
